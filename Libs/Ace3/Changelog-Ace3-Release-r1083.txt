@@ -1,0 +1,43 @@
+------------------------------------------------------------------------
+r1083 | nevcairiel | 2013-03-04 21:42:07 +0000 (Mon, 04 Mar 2013) | 1 line
+Changed paths:
+   A /tags/Release-r1083 (from /trunk:1082)
+
+Tag as Release-r1083
+------------------------------------------------------------------------
+r1082 | nevcairiel | 2013-03-04 21:41:40 +0000 (Mon, 04 Mar 2013) | 1 line
+Changed paths:
+   M /trunk/changelog.txt
+
+Update changelog
+------------------------------------------------------------------------
+r1081 | nevcairiel | 2013-03-04 21:41:30 +0000 (Mon, 04 Mar 2013) | 1 line
+Changed paths:
+   M /trunk/Ace3.toc
+
+Update TOC for 5.2
+------------------------------------------------------------------------
+r1080 | nevcairiel | 2013-02-27 14:10:36 +0000 (Wed, 27 Feb 2013) | 1 line
+Changed paths:
+   M /trunk/AceGUI-3.0/widgets/AceGUIContainer-InlineGroup.lua
+
+AceGUI-3.0: InlineGroup: Clear the title in OnAcquire
+------------------------------------------------------------------------
+r1079 | funkydude | 2013-02-17 19:56:06 +0000 (Sun, 17 Feb 2013) | 1 line
+Changed paths:
+   M /trunk/AceTimer-3.0/AceTimer-3.0.lua
+
+Manually set the arg count passed to unpack to fix an issue sending multiple args with nil values in-between, then ending with nil.
+------------------------------------------------------------------------
+r1077 | nevcairiel | 2013-02-10 14:32:49 +0000 (Sun, 10 Feb 2013) | 1 line
+Changed paths:
+   M /trunk/changelog.txt
+
+Update changelog
+------------------------------------------------------------------------
+r1076 | funkydude | 2013-01-21 14:31:01 +0000 (Mon, 21 Jan 2013) | 1 line
+Changed paths:
+   M /trunk/AceTimer-3.0/AceTimer-3.0.lua
+
+AceTimer-3.0: Add an extra id check in our OnFinished handler to compensate for repeating timers being cancelled and starting new timers before the OnFinished function ends. Also remove a nil check for .args as it being nil was a direct result of the issue we just resolved.
+------------------------------------------------------------------------

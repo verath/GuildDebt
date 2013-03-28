@@ -1,8 +1,22 @@
-## Interface: 40300
+## Interface: 50200
 ## Title : Guild Debt
 ## Notes:  Helping you keep track of your guild's money.
 ## Author: Peter Eliasson (Verath)
-## Version: v2.0.7
-## SavedVariables: GuildDebt
+## Version: @project-version@
+## SavedVariables: GuildDebtDB
+
+
+# Libs
+libs.xml
+
+# Locales
+Locales\english.lua
+
+# Main file
 GuildDebt.lua
-GUI.lua
+
+# Default DB values
+defaults.lua
+
+# Options (interface->addons)
+options.lua

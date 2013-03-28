@@ -1,0 +1,31 @@
+<Ui xsi:schemaLocation="http://www.blizzard.com/wow/ui/ ..\FrameXML\UI.xsd">
+	<!-- Ace3 modules we want to use -->
+		<!-- Core -->
+		<Script file="Ace3\Libs\LibStub\LibStub.lua" />
+		<Include file="Ace3\Libs\CallbackHandler-1.0\CallbackHandler-1.0.xml" />
+		<Include file="Ace3\Libs\AceAddon-3.0\AceAddon-3.0.xml" />
+		<Include file="Ace3\Libs\AceGUI-3.0\AceGUI-3.0.xml" />
+		
+		<!-- Timer -->
+		<Include file="Ace3\Libs\AceTimer-3.0\AceTimer-3.0.xml" />
+		
+		<!-- Console -->
+		<Include file="Ace3\Libs\AceConsole-3.0\AceConsole-3.0.xml" />
+		
+		<!-- DB -->
+		<Include file="Ace3\Libs\AceDB-3.0\AceDB-3.0.xml" />
+		
+		<!-- Locale -->
+		<Include file="Ace3\Libs\AceLocale-3.0\AceLocale-3.0.xml" />
+		
+		<!-- Event -->
+		<Include file="Ace3\Libs\AceEvent-3.0\AceEvent-3.0.xml" />
+		
+		<!-- Config -->
+		<Include file="Ace3\Libs\AceConfig-3.0\AceConfig-3.0.xml" />
+		<Include file="Ace3\Libs\AceConfigDialog-3.0\AceConfigDialog-3.0.xml" />
+		<Include file="Ace3\Libs\AceConfigRegistry-3.0\AceConfigRegistry-3.0.xml" />
+
+	<!-- LDB -->
+	<Include file="Libs\LibDataBroker-1.1\LibDataBroker-1.1.lua" />
+</Ui>
