@@ -24,8 +24,31 @@ addonTable[2] = locale;
 _G[addonName] = addonTable;
 
 
+-- Local functions
+local strlower = strlower;
+
+
 -- ###########################################
--- FUNCTIONS
+-- Global Methods
+-- ###########################################
+
+-- Returns the balance for the specifed character or nil on error
+function A:getBalanceForChar(charName)
+	charName = strlower(charName)
+	if not GuildDebt_getGuildName() then return nil end
+
+	if type(GuildDebt[ GuildDebt_getGuildName() ]) == "table" and type(GuildDebt[ GuildDebt_getGuildName() ]["Chars"][ charName ]) == "table" then
+		return GuildDebt[ GuildDebt_getGuildName() ]["Chars"][ charName ].MoneyBalance
+	else return nil end
+end
+
+-- Sets up the addon DB
+function A:setupDB()
+	self.db = LibStub("AceDB-3.0"):New("GuildDebtDB", A.defaults, true)
+end
+
+-- ###########################################
+-- Helper Functions
 -- ###########################################
 
 -- Converts all info into a fingerprint of a transaction
@@ -35,39 +58,13 @@ local function logInfoToFingerprint( transType, name, amount )
 	return format("%s#%s#%d", transType, name, amount)
 end
 
--- Returns the balance for the specifed player or nil on error
-local function getBalanceForChar(charName)
-	charName = strlower(charName)
-	if not GuildDebt_getGuildName() then return nil end
-
-	if type(GuildDebt[ GuildDebt_getGuildName() ]) == "table" and type(GuildDebt[ GuildDebt_getGuildName() ]["Chars"][ charName ]) == "table" then
-		return GuildDebt[ GuildDebt_getGuildName() ]["Chars"][ charName ].MoneyBalance
-	else return nil end
-end
-
--- Formats and prints balance information for
--- a character
-function GuildDebt_balanceOutput( target, chatType ) 
-	local balance = getBalanceForChar(target)
-	if balance == nil then
-		defaultOutput( format("No information available about %s's balance.", GuildDebt_capitalize(target)) )
-	else
-		if chatType == nil or strupper(chatType) == "SELF" then
-			defaultOutput( format("%s's balance is %s", GuildDebt_capitalize(target), GuildDebt_formatMoneyColor(balance)) )
-		else
-			chatOutput( format("%s's balance is %s", GuildDebt_capitalize(target), GuildDebt_formatMoney(balance)), chatType )
-		end
-	end
-end
-
 -- FUNCTION updateLogEntry
 -- Goes trough a log entry extracting required information
 -- and updating the list if required
 local function updateLogEntry( transType, name, amount, years, months, days, hours )
 	if name == nil then return end;
+	
 	name = strlower(name)
-	-- If we dont have an entry for the char in our var, create it
-	setupChar( GuildDebt_getGuildName(), name )
 
 	-- Get the fingerprint
 	local fingerprint = logInfoToFingerprint( transType, name, amount )
@@ -85,24 +82,23 @@ end
 -- Updates the guild debt from the guild money log
 local function updateGuildDebt()
 	local numUpdated = 0
-	-- Loop trough each entry
+
+	-- Loop trough each entry, 
 	for i = GetNumGuildBankMoneyTransactions(), 1, -1 do
-		if not updateLogEntry( GetGuildBankMoneyTransaction(i) ) then break end
-		numUpdated = numUpdated +1
+		if updateLogEntry( GetGuildBankMoneyTransaction(i) ) then 
+			numUpdated = numUpdated +1
+		else 
+			break
+		end
 	end
 
 	if numUpdated == 1 then defaultOutput( "1 new entry added.")
 	else defaultOutput( numUpdated .. " new entries added.") end
 end
 
--- Sets up the addon DB
-function A:setupDB()
-	self.db = LibStub("AceDB-3.0"):New("GuildDebtDB", A.defaults, true)
-end
-
 
 -- ###########################################
--- EVENT FUNCTIONS
+-- Event Handling
 -- ###########################################
 
 -- Called by ace3 once saved variables are available
@@ -121,14 +117,16 @@ function A:OnEnable()
 	end
 
 	-- Start listening for events
-	--[[self:RegisterEvent('GUILD_ROSTER_UPDATE', 'OnGuildRosterUpdate')
-	self:RegisterEvent('PLAYER_GUILD_UPDATE', 'OnGuildRosterUpdate')
-	self:RegisterEvent('PLAYER_TALENT_UPDATE', 'OnPlayerTalentUpdate')
-	--]]
+	self:RegisterEvent('GUILDBANKLOG_UPDATE', 'OnGuildBankLogUpdate');
+	self:RegisterEvent('GUILDBANKFRAME_OPENED', 'OnGuildBankFrameOpened');
 
 	-- Start listening for slash commands
 	self:RegisterChatCommand('guilddebt', "slashHandler")
 	self:RegisterChatCommand('gdt', "slashHandler")
+
+	-- Get the guild name
+	local guildName, rank, rankIndex = GetGuildInfo("player")
+	A.guildName = guildName;
 end
 
 -- Gets called if the addon is disabled
@@ -141,17 +139,14 @@ function A:OnDisable()
 	-- Unregister slash commands
 	self:UnregisterChatCommand('guilddebt')
 	self:UnregisterChatCommand('gdt')
+
+	-- Unset guild name
+	A.guildName = nil
 end
 
 
 -- When the guild log is updated
 function A:OnGuildBankLogUpdate(event, arg1, ...)
-	-- Make sure we got the guild name
-	if not GuildDebt_getGuildName() then return end
-	
-	-- And that the guild is set up
-	setupGuild( GuildDebt_getGuildName() )
-
 	-- Make sure we have a money log
 	if GetNumGuildBankMoneyTransactions() == 0 then return end
 
