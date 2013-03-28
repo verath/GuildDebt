@@ -151,14 +151,26 @@ function A:OnGuildBankLogUpdate(event, arg1, ...)
 	-- Make sure we have a money log
 	if GetNumGuildBankMoneyTransactions() == 0 then return end
 
-	-- Fetch info about latest transaction
-	local transType, name, amount, years, months, days, hours;
+	-- Fetch info about latest transaction 
+	--[[
+		NOTE about name: "A nil return indicates that this data is 
+		cached or possibly invalid!"
+	--]]
+	
+	--[[
+	local transType, name, amount, years, months, days, hours
+
 	for i = GetNumGuildBankMoneyTransactions(), 1, -1 do
 		transType, name, amount, years, months, days, hours = GetGuildBankMoneyTransaction(i)
-		if name ~= nil then break; end
+		if name ~= nil then 
+			break 
+		end
 	end
 	
-	if name == nil then return false; end
+	-- If we couldn't find a valid name
+	if name == nil then 
+		return false 
+	end
 	
 	-- Convert it into a fingerprint
 	local fingerprint = logInfoToFingerprint( transType, name, amount, years, months, days, hours )
@@ -168,7 +180,7 @@ function A:OnGuildBankLogUpdate(event, arg1, ...)
 		updateGuildDebt()
 		GuildDebt[GuildDebt_getGuildName()].UpdateFingerprint = fingerprint
 	end
-	
+	--]]
 end
 
 -- When the guild bank frame is opened
