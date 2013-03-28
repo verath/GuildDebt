@@ -116,25 +116,26 @@ function A:OnEnable()
 		A:Print(A.addonName .. " " .. L['enabled'] .. "!")
 	end
 
-	-- Start listening for events
-	self:RegisterEvent('GUILDBANKLOG_UPDATE', 'OnGuildBankLogUpdate');
-	self:RegisterEvent('GUILDBANKFRAME_OPENED', 'OnGuildBankFrameOpened');
-
 	-- Start listening for slash commands
 	self:RegisterChatCommand('guilddebt', "slashHandler")
 	self:RegisterChatCommand('gdt', "slashHandler")
 
-	-- Get the guild name
-	local guildName, rank, rankIndex = GetGuildInfo("player")
-	A.guildName = guildName;
+	if IsInGuild() then
+		-- Start listening for events
+		self:RegisterEvent('GUILDBANKLOG_UPDATE', 'OnGuildBankLogUpdate');
+		self:RegisterEvent('GUILDBANKFRAME_OPENED', 'OnGuildBankFrameOpened');
+
+		-- Get the guild name
+		local guildName, rank, rankIndex = GetGuildInfo("player")
+		A.guildName = guildName;
+	end
 end
 
 -- Gets called if the addon is disabled
 function A:OnDisable()
 	-- Unregister Events
-	--[[
-	self:UnregisterEvent('GUILD_ROSTER_UPDATE')
-	--]]
+	self:UnregisterEvent('GUILDBANKLOG_UPDATE')
+	self:UnregisterEvent('GUILDBANKFRAME_OPENED')
 
 	-- Unregister slash commands
 	self:UnregisterChatCommand('guilddebt')
@@ -172,7 +173,7 @@ end
 
 -- When the guild bank frame is opened
 function A:OnGuildBankFrameOpened(...)
-	-- When we open guild bank, update the guild money tab
+	-- When we open guild bank, query the server for the guild money tab
 	QueryGuildBankLog(MAX_GUILDBANK_TABS+1);
 end
 
